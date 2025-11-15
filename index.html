@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>诗意丹青 - 诗歌创作平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "楷体", "SimKai", "STKaiti", serif;
+        }
+
+        body {
+            background-color: #f8f4e9;
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 水墨背景容器 */
+        .ink-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) contrast(120%);
+            transition: background-image 1s ease-in-out;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 标题样式 */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #5c3d1e;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #7a5c3e;
+        }
+
+        /* 表单样式 */
+        .poetry-form {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #d4c4a8;
+        }
+
+        .form-section h2 {
+            color: #5c3d1e;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            padding-left: 10px;
+            border-left: 4px solid #b38e5d;
+        }
+
+        /* 图片上传区域 */
+        .image-upload {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .upload-box {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #b38e5d;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-box:hover {
+            background-color: rgba(179, 142, 93, 0.1);
+            border-color: #8a6d46;
+        }
+
+        .upload-box i {
+            font-size: 30px;
+            color: #b38e5d;
+            margin-bottom: 10px;
+        }
+
+        .upload-box span {
+            font-size: 0.9rem;
+            color: #7a5c3e;
+        }
+
+        .upload-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* 文本输入区域 */
+        .text-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .text-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-input label {
+            margin-bottom: 8px;
+            color: #5c3d1e;
+            font-weight: bold;
+        }
+
+        .text-input textarea {
+            padding: 12px;
+            border: 1px solid #d4c4a8;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 80px;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 选择区域 */
+        .select-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .select-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .select-input label {
+            margin-bottom: 8px;
+            color: #5c3d1e;
+            font-weight: bold;
+        }
+
+        .select-input select {
+            padding: 12px;
+            border: 1px solid #d4c4a8;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* 按钮样式 */
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0;
+            padding: 12px 20px;
+            background-color: #b38e5d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #8a6d46;
+        }
+
+        /* 输出区域 */
+        .output-section {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .output-section h2 {
+            color: #5c3d1e;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .poetry-output {
+            background-color: #f8f4e9;
+            border: 1px solid #d4c4a8;
+            border-radius: 5px;
+            padding: 30px;
+            min-height: 300px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .poetry-content {
+            font-size: 1.4rem;
+            line-height: 2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .poetry-info {
+            font-size: 1rem;
+            color: #7a5c3e;
+            text-align: center;
+        }
+
+        .download-btn {
+            display: block;
+            width: 180px;
+            margin: 0 auto;
+            padding: 10px 15px;
+            background-color: #5c3d1e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: #3e2914;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px 0;
+            color: #7a5c3e;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 水墨背景 -->
+    <div class="ink-background" id="inkBackground"></div>
+
+    <div class="container">
+        <!-- 标题区域 -->
+        <header class="header">
+            <h1>诗意丹青</h1>
+            <p>水墨为韵，诗词为魂，创作您的专属诗意画卷</p>
+        </header>
+
+        <!-- 表单区域 -->
+        <section class="poetry-form">
+            <div class="form-section">
+                <h2>上传图片 (最多5张)</h2>
+                <div class="image-upload">
+                    <div class="upload-box" id="uploadBox1" onclick="triggerFileInput(1)">
+                        <i>+</i>
+                        <span>上传图片</span>
+                        <img id="preview1" src="" alt="预览图片">
+                        <input type="file" class="file-input" id="fileInput1" accept="image/png" onchange="previewImage(this, 1)">
+                    </div>
+                    <div class="upload-box" id="uploadBox2" onclick="triggerFileInput(2)">
+                        <i>+</i>
+                        <span>上传图片</span>
+                        <img id="preview2" src="" alt="预览图片">
+                        <input type="file" class="file-input" id="fileInput2" accept="image/png" onchange="previewImage(this, 2)">
+                    </div>
+                    <div class="upload-box" id="uploadBox3" onclick="triggerFileInput(3)">
+                        <i>+</i>
+                        <span>上传图片</span>
+                        <img id="preview3" src="" alt="预览图片">
+                        <input type="file" class="file-input" id="fileInput3" accept="image/png" onchange="previewImage(this, 3)">
+                    </div>
+                    <div class="upload-box" id="uploadBox4" onclick="triggerFileInput(4)">
+                        <i>+</i>
+                        <span>上传图片</span>
+                        <img id="preview4" src="" alt="预览图片">
+                        <input type="file" class="file-input" id="fileInput4" accept="image/png" onchange="previewImage(this, 4)">
+                    </div>
+                    <div class="upload-box" id="uploadBox5" onclick="triggerFileInput(5)">
+                        <i>+</i>
+                        <span>上传图片</span>
+                        <img id="preview5" src="" alt="预览图片">
+                        <input type="file" class="file-input" id="fileInput5" accept="image/png" onchange="previewImage(this, 5)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>诗歌内容</h2>
+                <div class="text-inputs">
+                    <div class="text-input">
+                        <label for="emotion">诗歌感情</label>
+                        <textarea id="emotion" placeholder="请描述诗歌表达的感情..."></textarea>
+                    </div>
+                    <div class="text-input">
+                        <label for="imagery">诗歌主要意象</label>
+                        <textarea id="imagery" placeholder="请描述诗歌中的主要意象..."></textarea>
+                    </div>
+                    <div class="text-input">
+                        <label for="additional">其他补充信息</label>
+                        <textarea id="additional" placeholder="请补充其他信息..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>诗歌属性</h2>
+                <div class="select-inputs">
+                    <div class="select-input">
+                        <label for="theme">诗歌题材</label>
+                        <select id="theme">
+                            <option value="山水诗">山水诗</option>
+                            <option value="咏物诗">咏物诗</option>
+                            <option value="抒情诗">抒情诗</option>
+                            <option value="哲理诗">哲理诗</option>
+                            <option value="讽喻诗">讽喻诗</option>
+                            <option value="咏史诗">咏史诗</option>
+                        </select>
+                    </div>
+                    <div class="select-input">
+                        <label for="genre">诗歌体裁</label>
+                        <select id="genre">
+                            <option value="古体诗">古体诗</option>
+                            <option value="律诗">律诗</option>
+                            <option value="五言绝句">五言绝句</option>
+                            <option value="七言绝句">七言绝句</option>
+                        </select>
+                    </div>
+                    <div class="select-input">
+                        <label for="calligraphy">书法风格</label>
+                        <select id="calligraphy">
+                            <option value="楷书">楷书</option>
+                            <option value="行楷">行楷</option>
+                            <option value="行书">行书</option>
+                            <option value="草书">草书</option>
+                            <option value="狂草">狂草</option>
+                            <option value="隶书">隶书</option>
+                            <option value="篆书">篆书</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="generateBtn">生成诗歌图片</button>
+        </section>
+
+        <!-- 输出区域 -->
+        <section class="output-section" id="outputSection">
+            <h2>您的诗歌作品</h2>
+            <div class="poetry-output" id="poetryOutput">
+                <div class="poetry-content" id="poetryContent">
+                    <!-- 生成的诗歌内容将显示在这里 -->
+                </div>
+                <div class="poetry-info" id="poetryInfo">
+                    <!-- 诗歌信息将显示在这里 -->
+                </div>
+            </div>
+            <button class="download-btn" id="downloadBtn">下载诗歌图片</button>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>诗意丹青｜传承中华文化，创新文化表达</p>
+        </footer>
+    </div>
+
+    <script>
+        // 水墨背景图片数组 - 使用用户提供的Unsplash水墨画图片
+        const inkImages = [
+            'https://images.unsplash.com/photo-1707343843437-caacff5cfa74?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+            'https://images.unsplash.com/photo-1707343843984-0ce97bd5b6d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+            'https://images.unsplash.com/photo-1707343843598-3107774b6e4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+            'https://images.unsplash.com/photo-1707343844158-97c8c16a4851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+            'https://images.unsplash.com/photo-1707343843437-caacff5cfa74?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+        ];
+
+        // 设置随机水墨背景
+        document.addEventListener('DOMContentLoaded', function() {
+            const randomIndex = Math.floor(Math.random() * inkImages.length);
+            document.getElementById('inkBackground').style.backgroundImage = `url('${inkImages[randomIndex]}')`;
+
+            // 生成按钮点击事件
+            document.getElementById('generateBtn').addEventListener('click', function() {
+                generatePoetry();
+            });
+
+            // 下载按钮点击事件
+            document.getElementById('downloadBtn').addEventListener('click', function() {
+                downloadPoetryImage();
+            });
+        });
+
+        // 触发文件输入
+        function triggerFileInput(boxNumber) {
+            document.getElementById(`fileInput${boxNumber}`).click();
+        }
+
+        // 预览上传的图片
+        function previewImage(input, boxNumber) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const preview = document.getElementById(`preview${boxNumber}`);
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    
+                    // 隐藏上传图标和文字
+                    const uploadBox = document.getElementById(`uploadBox${boxNumber}`);
+                    uploadBox.querySelector('i').style.display = 'none';
+                    uploadBox.querySelector('span').style.display = 'none';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 生成诗歌函数
+        function generatePoetry() {
+            const emotion = document.getElementById('emotion').value;
+            const imagery = document.getElementById('imagery').value;
+            const additional = document.getElementById('additional').value;
+            const theme = document.getElementById('theme').value;
+            const genre = document.getElementById('genre').value;
+            const calligraphy = document.getElementById('calligraphy').value;
+
+            // 验证必填字段
+            if (!emotion || !imagery) {
+                alert('请至少填写诗歌感情和主要意象');
+                return;
+            }
+
+            // 根据用户输入生成诗歌内容（这里是模拟，实际应用中可能需要AI生成）
+            const poetryText = generatePoetryText(emotion, imagery, additional, theme, genre);
+            
+            // 显示诗歌内容
+            document.getElementById('poetryContent').innerHTML = poetryText;
+            
+            // 显示诗歌信息
+            document.getElementById('poetryInfo').innerHTML = 
+                `题材：${theme} | 体裁：${genre} | 书法：${calligraphy}`;
+            
+            // 显示输出区域
+            document.getElementById('outputSection').style.display = 'block';
+            
+            // 滚动到输出区域
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 生成诗歌文本（模拟函数）
+        function generatePoetryText(emotion, imagery, additional, theme, genre) {
+            // 这里应该是调用AI生成诗歌的逻辑
+            // 现在使用模拟数据
+            const samplePoems = [
+                "山光忽西落，池月渐东上。<br>散发乘夕凉，开轩卧闲敞。",
+                "空山新雨后，天气晚来秋。<br>明月松间照，清泉石上流。",
+                "千山鸟飞绝，万径人踪灭。<br>孤舟蓑笠翁，独钓寒江雪。",
+                "床前明月光，疑是地上霜。<br>举头望明月，低头思故乡。",
+                "春眠不觉晓，处处闻啼鸟。<br>夜来风雨声，花落知多少。"
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * samplePoems.length);
+            return samplePoems[randomIndex];
+        }
+
+        // 下载诗歌图片函数
+        function downloadPoetryImage() {
+            alert('下载功能将在完整版中实现');
+            // 实际应用中这里应该使用html2canvas或其他库将诗歌区域转换为图片
+            // 然后提供下载链接
+        }
+    </script>
+</body>
+</html>
