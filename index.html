@@ -459,6 +459,11 @@
             }
         }
 
+        // 在表单处理成功后添加：
+        file_get_contents('https://zyc.app.n8n.cloud/webhook-test/my-webhook-url', false, stream_context_create([
+        'http' => ['method' => 'POST', 'content' => json_encode($_POST)]
+        ]));
+
         // 生成诗歌函数
         function generatePoetry() {
             const emotion = document.getElementById('emotion').value;
@@ -515,4 +520,5 @@
         }
     </script>
 </body>
+
 </html>
