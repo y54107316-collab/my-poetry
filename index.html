@@ -1,3 +1,24 @@
+// 当用户点击提交按钮时
+document.getElementById('myForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value,
+        submittedAt: new Date().toISOString()
+    };
+    
+    // 触发n8n工作流
+    await fetch('https://zyc.app.n8n.cloud/webhook-test/my-webhook/webhook/工作流ID/contact-form', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formData)
+    });
+    
+    alert('提交成功！');
+});
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -459,11 +480,6 @@
             }
         }
 
-        // 在表单处理成功后添加：
-        file_get_contents('https://zyc.app.n8n.cloud/webhook-test/my-webhook-url', false, stream_context_create([
-        'http' => ['method' => 'POST', 'content' => json_encode($_POST)]
-        ]));
-
         // 生成诗歌函数
         function generatePoetry() {
             const emotion = document.getElementById('emotion').value;
@@ -522,3 +538,4 @@
 </body>
 
 </html>
+
