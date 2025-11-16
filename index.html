@@ -1,24 +1,3 @@
-// 当用户点击提交按钮时
-document.getElementById('myForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        message: document.getElementById('message').value,
-        submittedAt: new Date().toISOString()
-    };
-    
-    // 触发n8n工作流
-    await fetch('https://zyc.app.n8n.cloud/webhook-test/my-webhook/webhook/工作流ID/contact-form', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData)
-    });
-    
-    alert('提交成功！');
-});
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -42,7 +21,6 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             overflow-x: hidden;
         }
 
-        /* 水墨背景容器 */
         .ink-background {
             position: fixed;
             top: 0;
@@ -57,14 +35,12 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             transition: background-image 1s ease-in-out;
         }
 
-        /* 主容器 */
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* 标题样式 */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -84,7 +60,6 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             color: #7a5c3e;
         }
 
-        /* 表单样式 */
         .poetry-form {
             background-color: rgba(255, 255, 255, 0.85);
             border-radius: 8px;
@@ -107,7 +82,6 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             border-left: 4px solid #b38e5d;
         }
 
-        /* 图片上传区域 */
         .image-upload {
             display: flex;
             flex-wrap: wrap;
@@ -160,7 +134,6 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             display: none;
         }
 
-        /* 文本输入区域 */
         .text-inputs {
             display: flex;
             flex-direction: column;
@@ -188,7 +161,6 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             background-color: rgba(255, 255, 255, 0.8);
         }
 
-        /* 选择区域 */
         .select-inputs {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -215,7 +187,6 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             color: #333;
         }
 
-        /* 按钮样式 */
         .submit-btn {
             display: block;
             width: 200px;
@@ -234,64 +205,52 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             background-color: #8a6d46;
         }
 
-        /* 输出区域 */
-        .output-section {
-            background-color: rgba(255, 255, 255, 0.85);
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #b38e5d;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
             display: none;
         }
 
-        .output-section h2 {
-            color: #5c3d1e;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            text-align: center;
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
-        .poetry-output {
-            background-color: #f8f4e9;
-            border: 1px solid #d4c4a8;
-            border-radius: 5px;
-            padding: 30px;
-            min-height: 300px;
-            position: relative;
-            margin-bottom: 20px;
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
-        .poetry-content {
-            font-size: 1.4rem;
-            line-height: 2;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .poetry-info {
-            font-size: 1rem;
-            color: #7a5c3e;
-            text-align: center;
-        }
-
-        .download-btn {
-            display: block;
-            width: 180px;
-            margin: 0 auto;
-            padding: 10px 15px;
-            background-color: #5c3d1e;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .download-btn:hover {
-            background-color: #3e2914;
-        }
-
-        /* 页脚 */
         .footer {
             text-align: center;
             margin-top: 50px;
@@ -302,17 +261,14 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
     </style>
 </head>
 <body>
-    <!-- 水墨背景 -->
     <div class="ink-background" id="inkBackground"></div>
 
     <div class="container">
-        <!-- 标题区域 -->
         <header class="header">
             <h1>诗意丹青</h1>
             <p>水墨为韵，诗词为魂，创作您的专属诗意画卷</p>
         </header>
 
-        <!-- 表单区域 -->
         <section class="poetry-form">
             <div class="form-section">
                 <h2>上传图片 (最多5张)</h2>
@@ -406,38 +362,34 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
                 </div>
             </div>
 
-            <button class="submit-btn" id="generateBtn">生成诗歌图片</button>
-        </section>
-
-        <!-- 输出区域 -->
-        <section class="output-section" id="outputSection">
-            <h2>您的诗歌作品</h2>
-            <div class="poetry-output" id="poetryOutput">
-                <div class="poetry-content" id="poetryContent">
-                    <!-- 生成的诗歌内容将显示在这里 -->
-                </div>
-                <div class="poetry-info" id="poetryInfo">
-                    <!-- 诗歌信息将显示在这里 -->
-                </div>
+            <!-- 加载动画 -->
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>正在发送数据到n8n，请稍候...</p>
             </div>
-            <button class="download-btn" id="downloadBtn">下载诗歌图片</button>
+
+            <!-- 状态消息 -->
+            <div class="status-message" id="statusMessage"></div>
+
+            <button class="submit-btn" id="generateBtn">提交到n8n</button>
         </section>
 
-        <!-- 页脚 -->
         <footer class="footer">
             <p>诗意丹青｜传承中华文化，创新文化表达</p>
         </footer>
     </div>
 
     <script>
-        // 水墨背景图片数组 - 使用用户提供的Unsplash水墨画图片
+        // 水墨背景图片数组
         const inkImages = [
             'https://images.unsplash.com/photo-1707343843437-caacff5cfa74?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
             'https://images.unsplash.com/photo-1707343843984-0ce97bd5b6d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
             'https://images.unsplash.com/photo-1707343843598-3107774b6e4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-            'https://images.unsplash.com/photo-1707343844158-97c8c16a4851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-            'https://images.unsplash.com/photo-1707343843437-caacff5cfa74?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+            'https://images.unsplash.com/photo-1707343844158-97c8c16a4851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
         ];
+
+        // n8n Webhook URL
+        const N8N_WEBHOOK_URL = 'https://zyc.app.n8n.cloud/webhook-test/my-webhook';
 
         // 设置随机水墨背景
         document.addEventListener('DOMContentLoaded', function() {
@@ -446,12 +398,7 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
 
             // 生成按钮点击事件
             document.getElementById('generateBtn').addEventListener('click', function() {
-                generatePoetry();
-            });
-
-            // 下载按钮点击事件
-            document.getElementById('downloadBtn').addEventListener('click', function() {
-                downloadPoetryImage();
+                sendDataToN8N();
             });
         });
 
@@ -480,62 +427,94 @@ document.getElementById('myForm').addEventListener('submit', async function(e) {
             }
         }
 
-        // 生成诗歌函数
-        function generatePoetry() {
-            const emotion = document.getElementById('emotion').value;
-            const imagery = document.getElementById('imagery').value;
-            const additional = document.getElementById('additional').value;
-            const theme = document.getElementById('theme').value;
-            const genre = document.getElementById('genre').value;
-            const calligraphy = document.getElementById('calligraphy').value;
+        // 收集图片信息
+        function collectImageData() {
+            const images = [];
+            for (let i = 1; i <= 5; i++) {
+                const fileInput = document.getElementById(`fileInput${i}`);
+                if (fileInput.files && fileInput.files[0]) {
+                    images.push({
+                        filename: fileInput.files[0].name,
+                        size: fileInput.files[0].size,
+                        type: fileInput.files[0].type
+                    });
+                }
+            }
+            return images;
+        }
+
+        // 显示状态消息
+        function showStatus(message, isSuccess) {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = `status-message ${isSuccess ? 'status-success' : 'status-error'}`;
+            statusElement.style.display = 'block';
+            
+            // 自动隐藏成功消息
+            if (isSuccess) {
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // 发送数据到n8n Webhook
+        async function sendDataToN8N() {
+            // 收集表单数据
+            const formData = {
+                images: collectImageData(),
+                emotion: document.getElementById('emotion').value,
+                imagery: document.getElementById('imagery').value,
+                additional: document.getElementById('additional').value,
+                theme: document.getElementById('theme').value,
+                genre: document.getElementById('genre').value,
+                calligraphy: document.getElementById('calligraphy').value,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
 
             // 验证必填字段
-            if (!emotion || !imagery) {
-                alert('请至少填写诗歌感情和主要意象');
+            if (!formData.emotion || !formData.imagery) {
+                showStatus('请填写诗歌感情和主要意象', false);
                 return;
             }
 
-            // 根据用户输入生成诗歌内容（这里是模拟，实际应用中可能需要AI生成）
-            const poetryText = generatePoetryText(emotion, imagery, additional, theme, genre);
-            
-            // 显示诗歌内容
-            document.getElementById('poetryContent').innerHTML = poetryText;
-            
-            // 显示诗歌信息
-            document.getElementById('poetryInfo').innerHTML = 
-                `题材：${theme} | 体裁：${genre} | 书法：${calligraphy}`;
-            
-            // 显示输出区域
-            document.getElementById('outputSection').style.display = 'block';
-            
-            // 滚动到输出区域
-            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
-        }
+            // 显示加载动画
+            const loadingElement = document.getElementById('loading');
+            const generateBtn = document.getElementById('generateBtn');
+            loadingElement.style.display = 'block';
+            generateBtn.disabled = true;
+            generateBtn.textContent = '发送中...';
 
-        // 生成诗歌文本（模拟函数）
-        function generatePoetryText(emotion, imagery, additional, theme, genre) {
-            // 这里应该是调用AI生成诗歌的逻辑
-            // 现在使用模拟数据
-            const samplePoems = [
-                "山光忽西落，池月渐东上。<br>散发乘夕凉，开轩卧闲敞。",
-                "空山新雨后，天气晚来秋。<br>明月松间照，清泉石上流。",
-                "千山鸟飞绝，万径人踪灭。<br>孤舟蓑笠翁，独钓寒江雪。",
-                "床前明月光，疑是地上霜。<br>举头望明月，低头思故乡。",
-                "春眠不觉晓，处处闻啼鸟。<br>夜来风雨声，花落知多少。"
-            ];
-            
-            const randomIndex = Math.floor(Math.random() * samplePoems.length);
-            return samplePoems[randomIndex];
-        }
+            // 隐藏之前的状态消息
+            document.getElementById('statusMessage').style.display = 'none';
 
-        // 下载诗歌图片函数
-        function downloadPoetryImage() {
-            alert('下载功能将在完整版中实现');
-            // 实际应用中这里应该使用html2canvas或其他库将诗歌区域转换为图片
-            // 然后提供下载链接
+            try {
+                // 发送数据到n8n Webhook
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    showStatus('数据已成功发送到n8n！n8n工作流已触发。', true);
+                    console.log('数据成功发送到n8n:', formData);
+                } else {
+                    throw new Error(`HTTP错误! 状态码: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('发送数据到n8n时出错:', error);
+                showStatus(`发送失败: ${error.message}`, false);
+            } finally {
+                // 隐藏加载动画，恢复按钮
+                loadingElement.style.display = 'none';
+                generateBtn.disabled = false;
+                generateBtn.textContent = '提交到n8n';
+            }
         }
     </script>
 </body>
-
 </html>
-
